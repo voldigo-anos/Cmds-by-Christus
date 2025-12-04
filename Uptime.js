@@ -88,7 +88,7 @@ module.exports = {
         name: 'cpanel',
         aliases: ['upt', 'uptime'],
         version: '6.3',
-        author: 'Mahi--',
+        author: 'Christus',
         countDown: 10,
         role: 0,
         category: 'system',
@@ -192,10 +192,10 @@ module.exports = {
                 ctx.textBaseline = 'middle';
                 ctx.fillStyle = glowColor;
                 ctx.font = 'bold 28px Arial';
-                ctx.fillText("Eren", centerX, centerY - 15);
+                ctx.fillText("Christu Bot", centerX, centerY - 15);
                 ctx.fillStyle = textColor;
                 ctx.font = '16px Arial';
-                ctx.fillText("BY - Mohammad Alamin", centerX, centerY + 22);
+                ctx.fillText("BY - Christus", centerX, centerY + 22);
 
                 const now = new Date();
                 const dateString = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
@@ -225,4 +225,5 @@ module.exports = {
             return message.reply(`❌ Could not generate the system dashboard image due to an internal error. Please check console logs.`);
         }
     }
+
 };
