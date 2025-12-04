@@ -2,7 +2,7 @@ module.exports = {
 	config: {
 		name: "count",
 		version: "2.5", 
-		author: "Mahi--", // Modified by AI
+		author: "Christus", 
 		countDown: 10,
 		role: 0,
 		description: {
@@ -647,4 +647,5 @@ module.exports = {
 			message.reply(getLang("invalidPage"));
 		}
 	}
+
 };
