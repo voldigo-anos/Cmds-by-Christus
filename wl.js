@@ -1,4 +1,5 @@
 const { config } = global.GoatBot;
+
 module.exports = {
 	config: {
 		name: "wl",
@@ -7,28 +8,28 @@ module.exports = {
 		countDown: 5,
 		role: 2,
 		longDescription: {
-			en: "Add, remove, edit whiteListIds"
+			fr: "Ajouter, supprimer ou modifier les whiteListIds"
 		},
 		category: "𝗔𝗗𝗠𝗜𝗡",
 		guide: {
-			en: '   {pn} [add | -a] <uid | @tag>: Add admin role for user'
-				+ '\n   {pn} [remove | -r] <uid | @tag>: Remove admin role of user'
-				+ '\n   {pn} [list | -l]: List all admins'
-        + '\n   {pn} [ on | off ]: enable and disable whiteList mode'
+			fr: '   {pn} [add | -a] <uid | @tag> : Ajouter le rôle d\'administrateur à un utilisateur'
+				+ '\n   {pn} [remove | -r] <uid | @tag> : Retirer le rôle d\'administrateur d\'un utilisateur'
+				+ '\n   {pn} [list | -l] : Lister tous les administrateurs'
+        + '\n   {pn} [on | off] : Activer ou désactiver le mode whiteList'
 		}
 	},
 
 	langs: {
-		en: {
-			added: "✅ | Added whiteList role for %1 users:\n%2",
-			alreadyAdmin: "\n⚠ | %1 users already have whiteList role:\n%2",
-			missingIdAdd: "⚠ | Please enter ID or tag user to add in whiteListIds",
-			removed: "✅ | Removed whiteList role of %1 users:\n%2",
-			notAdmin: "⚠ | %1 users don't have whiteListIds role:\n%2",
-			missingIdRemove: "⚠ | Please enter ID or tag user to remove whiteListIds",
-			listAdmin: "👑 | List of whiteListIds:\n%1",
-      enable: "✅ Turned on",
-      disable: "✅ Turned off"
+		fr: {
+			added: "✅ | Rôle whiteList ajouté pour %1 utilisateurs :\n%2",
+			alreadyAdmin: "\n⚠ | %1 utilisateurs avaient déjà le rôle whiteList :\n%2",
+			missingIdAdd: "⚠ | Veuillez entrer l'ID ou taguer l'utilisateur à ajouter dans whiteListIds",
+			removed: "✅ | Rôle whiteList retiré pour %1 utilisateurs :\n%2",
+			notAdmin: "⚠ | %1 utilisateurs n'avaient pas le rôle whiteListIds :\n%2",
+			missingIdRemove: "⚠ | Veuillez entrer l'ID ou taguer l'utilisateur à retirer de whiteListIds",
+			listAdmin: "👑 | Liste des whiteListIds :\n%1",
+      enable: "✅ Mode whiteList activé",
+      disable: "✅ Mode whiteList désactivé"
 		}
 	},
 
@@ -98,18 +99,18 @@ module.exports = {
 				const getNames = await Promise.all(config.whiteListMode.whiteListIds.map(uid => usersData.getName(uid).then(name => ({ uid, name }))));
 				return message.reply(getLang("listAdmin", getNames.map(({ uid, name }) => `• ${name} (${uid})`).join("\n")));
 			}
-        case "on": {              
-   config.whiteListMode.enable = true;
-                writeFileSync(global.client.dirConfig, JSON.stringify(config, null, 2));
-                return message.reply(getLang("enable"))
-            }
-            case "off": {
-   config.whiteListMode.enable = false;
-                writeFileSync(global.client.dirConfig, JSON.stringify(config, null, 2));
-                return message.reply(getLang("disable"))
-            }
-            default:
-                return message.SyntaxError();
-        }
+      case "on": {              
+        config.whiteListMode.enable = true;
+        writeFileSync(global.client.dirConfig, JSON.stringify(config, null, 2));
+        return message.reply(getLang("enable"))
+      }
+      case "off": {
+        config.whiteListMode.enable = false;
+        writeFileSync(global.client.dirConfig, JSON.stringify(config, null, 2));
+        return message.reply(getLang("disable"))
+      }
+      default:
+        return message.SyntaxError();
     }
+  }
 };
