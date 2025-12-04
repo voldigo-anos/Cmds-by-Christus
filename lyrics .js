@@ -1,41 +1,72 @@
-const axios = require("axios");
+const axios = require("axios"); // Importe la bibliothèque axios pour faire des requêtes HTTP
+const fs = require("fs"); // Importe le module fs pour gérer les fichiers
+const path = require("path"); // Importe le module path pour gérer les chemins de fichiers
 
 module.exports = {
   config: {
-    name: "lyrics",
-    version: "1.0",
-    author: "Aesther x Christus",
-    countDown: 5,
-    role: 0,
-    shortDescription: "🎵 Recherche de paroles de chanson",
-    longDescription: "Récupère les paroles d'une chanson selon le mot-clé fourni",
-    category: "text",
-    guide: "{pn} <nom de l'artiste ou chanson>"
+    name: "lyrics", // Nom de la commande
+    version: "1.2", // Version de la commande
+    author: "Christus x Aesther", // Auteur de la commande
+    countDown: 5, // Temps d'attente avant de pouvoir réutiliser la commande (en secondes)
+    role: 0, // Rôle requis pour utiliser la commande (0 = tous les utilisateurs)
+    shortDescription: "Récupérer les paroles d'une chanson", // Courte description de la commande
+    longDescription: "Obtenir les paroles détaillées d'une chanson avec le titre, l'artiste et l'illustration de la pochette.", // Description détaillée de la commande
+    category: "search", // Catégorie de la commande (recherche)
+    guide: {
+      en: "{pn} <song name>\nExample: {pn} apt" // Guide d'utilisation en anglais
+    }
   },
 
-  onStart: async function({ api, event, message, args }) {
-    if (!args[0]) return message.reply("❌ Veuillez entrer le nom de l'artiste ou de la chanson.");
-
-    const query = args.join(" ");
-    const apiUrl = `https://archive.lick.eu.org/api/search/lyrics?query=${encodeURIComponent(query)}`;
+  onStart: async function ({ api, event, args }) {
+    const query = args.join(" "); // Récupère le nom de la chanson à partir des arguments
+    if (!query) {
+      return api.sendMessage(
+        "⚠️ Veuillez fournir le nom d'une chanson !\nExemple : lyrics apt", // Message d'erreur si aucun nom de chanson n'est fourni
+        event.threadID,
+        event.messageID
+      );
+    }
 
     try {
-      message.reply(`🔍 Recherche des paroles pour : "${query}"...`);
+      const { data } = await axios.get(
+        `https://lyricstx.vercel.app/youtube/lyrics?title=${encodeURIComponent(query)}` // Fait une requête HTTP à une API pour récupérer les paroles
+      );
 
-      const res = await axios.get(apiUrl);
-      if (!res.data.status) return message.reply("❌ Aucune paroles trouvées.");
+      if (!data?.lyrics) {
+        return api.sendMessage("❌ Paroles non trouvées.", event.threadID, event.messageID); // Message d'erreur si les paroles ne sont pas trouvées
+      }
 
-      const result = res.data.result;
-      const lyricsText = result.lyrics.length > 2000 ? result.lyrics.slice(0, 2000) + "\n\n[...]" : result.lyrics;
+      const { artist_name, track_name, artwork_url, lyrics } = data; // Extrait les informations des paroles récupérées
 
-      api.sendMessage({
-        body: `🎶 ${result.title}\n\n${lyricsText}`,
-        attachment: result.thumb ? await global.utils.getStreamFromURL(result.thumb) : undefined
-      }, event.threadID);
+      const imgPath = path.join(__dirname, "lyrics.jpg"); // Définit le chemin pour enregistrer l'illustration de la pochette
+      const imgResp = await axios.get(artwork_url, { responseType: "stream" }); // Récupère l'illustration de la pochette sous forme de flux
+      const writer = fs.createWriteStream(imgPath); // Crée un flux pour écrire l'image dans le fichier
+
+      imgResp.data.pipe(writer); // Copie le flux de l'image dans le fichier
+
+      writer.on("finish", () => {
+        api.sendMessage(
+          {
+            body: `🎼 ${track_name}\n👤 Artiste : ${artist_name}\n\n${lyrics}`, // Envoie les paroles avec le titre, l'artiste et l'illustration
+            attachment: fs.createReadStream(imgPath)
+          },
+          event.threadID,
+          () => fs.unlinkSync(imgPath), // Supprime le fichier d'illustration après l'envoi
+          event.messageID
+        );
+      });
+
+      writer.on("error", () => {
+        api.sendMessage(
+          `🎼 ${track_name}\n👤 Artiste : ${artist_name}\n\n${lyrics}`, // Envoie les paroles sans l'illustration en cas d'erreur
+          event.threadID,
+          event.messageID
+        );
+      });
 
     } catch (err) {
       console.error(err);
-      message.reply("❌ Une erreur est survenue lors de la récupération des paroles.");
+      api.sendMessage("❌ Erreur : Impossible de récupérer les paroles. Veuillez réessayer plus tard.", event.threadID, event.messageID); // Message d'erreur en cas d'échec de la requête
     }
   }
 };

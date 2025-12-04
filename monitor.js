@@ -2,38 +2,38 @@ const axios = require("axios");
 
 module.exports = {
  config: {
- name: "monitor",
- version: "1.1.0",
- author: "Christus x Aesther",
- countDown: 5,
- role: 0,
+ name: "monitor", // Nom de la commande
+ version: "1.1.0", // Version de la commande
+ author: "Christus x Aesther", // Auteur de la commande
+ countDown: 5, // Temps d'attente avant que la commande puisse être réutilisée (en secondes)
+ role: 0, // Niveau de rôle requis pour utiliser la commande (0 = tous)
  shortDescription: {
- en: "Create or rename uptime monitor"
+ en: "Créer ou renommer un moniteur de disponibilité" // Description courte (anglais)
  },
  description: {
- en: "Create UptimeRobot monitor or rename an existing one"
+ en: "Créer un moniteur UptimeRobot ou renommer un existant" // Description détaillée (anglais)
  },
- category: "system",
+ category: "system", // Catégorie de la commande
  guide: {
- en: "{p}monitor [name] [url]\n{p}monitor rename [id] [newName]"
+ en: "{p}monitor [nom] [url]\n{p}monitor rename [id] [nouveauNom]" // Guide d'utilisation (anglais)
  }
  },
 
  onStart: async function ({ api, event, args }) {
  if (args.length < 1) {
- return api.sendMessage("❌ Usage:\n{p}monitor [name] [url]\n{p}monitor rename [id] [newName]", event.threadID, event.messageID);
+ return api.sendMessage("❌ Utilisation:\n{p}monitor [nom] [url]\n{p}monitor rename [id] [nouveauNom]", event.threadID, event.messageID);
  }
 
  const subCommand = args[0].toLowerCase();
 
- // === Rename monitor ===
+ // === Renommer le moniteur ===
  if (subCommand === "rename") {
  if (args.length < 3) {
- return api.sendMessage("❌ Usage:\n{p}monitor rename [id] [newName]", event.threadID, event.messageID);
+ return api.sendMessage("❌ Utilisation:\n{p}monitor rename [id] [nouveauNom]", event.threadID, event.messageID);
  }
 
  const id = args[1];
- const newName = args.slice(2).join(" ");
+ const newName = args.slice(2).join(" "); // Récupère le nouveau nom (peut contenir des espaces)
 
  try {
  const res = await axios.get("https://web-api-delta.vercel.app/upt/rename", {
@@ -43,27 +43,27 @@ module.exports = {
  const result = res.data;
 
  if (result.error) {
- return api.sendMessage(`⚠️ Rename Failed: ${result.error}`, event.threadID, event.messageID);
+ return api.sendMessage(`⚠️ Échec du renommage : ${result.error}`, event.threadID, event.messageID);
  }
 
  const updated = result.data;
- return api.sendMessage(`✅ Monitor Renamed!\n🆔 ID: ${updated.id}\n📛 New Name: ${updated.name}`, event.threadID, event.messageID);
+ return api.sendMessage(`✅ Moniteur renommé !\n🆔 ID : ${updated.id}\n📛 Nouveau nom : ${updated.name}`, event.threadID, event.messageID);
  } catch (e) {
- return api.sendMessage(`🚫 API request failed!\n${e.message}`, event.threadID, event.messageID);
+ return api.sendMessage(`🚫 La requête API a échoué !\n${e.message}`, event.threadID, event.messageID);
  }
  }
 
- // === Create monitor ===
+ // === Créer un moniteur ===
  if (args.length < 2) {
- return api.sendMessage("❌ Usage:\n{p}monitor [name] [url]", event.threadID, event.messageID);
+ return api.sendMessage("❌ Utilisation:\n{p}monitor [nom] [url]", event.threadID, event.messageID);
  }
 
  const name = args[0];
  const url = args[1];
- const interval = 300;
+ const interval = 300; // Intervalle de vérification (en secondes)
 
  if (!url.startsWith("http")) {
- return api.sendMessage("❌ Please provide a valid URL!", event.threadID, event.messageID);
+ return api.sendMessage("❌ Veuillez fournir une URL valide !", event.threadID, event.messageID);
  }
 
  try {
@@ -74,14 +74,14 @@ module.exports = {
  const result = res.data;
 
  if (result.error) {
- return api.sendMessage(`⚠️ Error: ${result.error}`, event.threadID, event.messageID);
+ return api.sendMessage(`⚠️ Erreur : ${result.error}`, event.threadID, event.messageID);
  }
 
  const monitor = result.data;
- const msg = `✅ Monitor Created Successfully!\n━━━━━━━━━━━━━━\n🆔 ID: ${monitor.id}\n📛 Name: ${monitor.name}\n🔗 URL: ${monitor.url}\n⏱️ Interval: ${monitor.interval / 60} mins\n📶 Status: ${monitor.status == 1 ? "Active ✅" : "Inactive ❌"}`;
+ const msg = `✅ Moniteur créé avec succès !\n━━━━━━━━━━━━━━\n🆔 ID : ${monitor.id}\n📛 Nom : ${monitor.name}\n🔗 URL : ${monitor.url}\n⏱️ Intervalle : ${monitor.interval / 60} min\n📶 Statut : ${monitor.status == 1 ? "Actif ✅" : "Inactif ❌"}`;
  return api.sendMessage(msg, event.threadID, event.messageID);
  } catch (e) {
- return api.sendMessage(`🚫 API request failed!\n${e.message}`, event.threadID, event.messageID);
+ return api.sendMessage(`🚫 La requête API a échoué !\n${e.message}`, event.threadID, event.messageID);
  }
  }
 };

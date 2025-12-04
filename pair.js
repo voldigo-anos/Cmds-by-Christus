@@ -1,122 +1,61 @@
-//create by Christus and Aesther
-
-const { loadImage, createCanvas } = require("canvas");
-const axios = require("axios");
-const fs = require("fs-extra");
+const axios = require("axios"); // Importe la bibliothèque axios pour les requêtes HTTP
+const fs = require("fs-extra"); // Importe la bibliothèque fs-extra pour les opérations de fichiers (plus complète que fs de base)
 
 module.exports = {
-    config: {
-        name: "pair2",
-        countDown: 5,
-        role: 0,
-        category: "fun",
-    },
-    onStart: async function ({ api, event }) {
-        let pathImg = __dirname + "/cache/background.png";
-        let pathAvt1 = __dirname + "/cache/Avtmot.png";
-        let pathAvt2 = __dirname + "/cache/Avthai.png";
+  config: {
+    name: "pair", // Nom de la commande (pour l'appeler)
+    aliases: [], // Alias de la commande (noms alternatifs)
+    version: "1.0", // Version de la commande
+    author: "Christus x Aesther", // Auteur de la commande
+    countDown: 5, // Délai d'attente en secondes avant que la commande puisse être réutilisée
+    role: 0, // Rôle requis pour utiliser la commande (0 = tous les utilisateurs)
+    shortDescription: "", // Courte description de la commande
+    longDescription: "", // Description détaillée de la commande
+    category: "love", // Catégorie de la commande (ex: amour, utilitaire, etc.)
+    guide: "{pn}" // Instructions d'utilisation de la commande (remplacé par le préfixe du bot)
+  },
 
-        var id1 = event.senderID;
-        var name1 = (await api.getUserInfo(id1))[id1].name;
-        var ThreadInfo = await api.getThreadInfo(event.threadID);
-        var all = ThreadInfo.userInfo;
+  onStart: async function({ api, event, threadsData, usersData }) {
+    // Fonction exécutée lorsque la commande est appelée
 
-        let gender1;
-        for (let c of all) if (c.id == id1) gender1 = c.gender;
+    const { threadID, messageID, senderID } = event; // Extrait les informations de l'événement (ID du fil de discussion, ID du message, ID de l'expéditeur)
+    const { participantIDs } = await api.getThreadInfo(threadID); // Récupère les ID des participants du fil de discussion
+    var tle = Math.floor(Math.random() * 101); // Génère un nombre aléatoire entre 0 et 100 (pour le pourcentage de compatibilité)
+    var namee = (await usersData.get(senderID)).name // Récupère le nom de l'expéditeur
+    const botID = api.getCurrentUserID(); // Récupère l'ID du bot
+    const listUserID = participantIDs.filter(ID => ID != botID && ID != senderID); // Filtre la liste des ID des participants pour ne garder que les autres utilisateurs (pas le bot ni l'expéditeur)
+    var id = listUserID[Math.floor(Math.random() * listUserID.length)]; // Choisit aléatoirement un ID d'un autre utilisateur
+    var name = (await usersData.get(id)).name // Récupère le nom de l'utilisateur sélectionné
 
-        const botID = api.getCurrentUserID();
-        let candidates = [];
-        if (gender1 == "FEMALE") {
-            candidates = all.filter(u => u.gender == "MALE" && u.id !== id1 && u.id !== botID).map(u => u.id);
-        } else if (gender1 == "MALE") {
-            candidates = all.filter(u => u.gender == "FEMALE" && u.id !== id1 && u.id !== botID).map(u => u.id);
-        } else {
-            candidates = all.filter(u => u.id !== id1 && u.id !== botID).map(u => u.id);
-        }
+    var arraytag = []; // Crée un tableau pour les mentions (pour taguer les utilisateurs dans le message)
+    arraytag.push({ id: senderID, tag: namee }); // Ajoute l'expéditeur au tableau des mentions
+    arraytag.push({ id: id, tag: name }); // Ajoute l'utilisateur sélectionné au tableau des mentions
 
-        if (!candidates.length) return api.sendMessage("No suitable partner found for pairing.", event.threadID);
+    // Récupère l'avatar de l'expéditeur depuis Facebook
+    let Avatar = (await axios.get(`https://graph.facebook.com/${senderID}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: "arraybuffer" })).data;
+    fs.writeFileSync(__dirname + "/cache/avt.png", Buffer.from(Avatar, "utf-8")); // Enregistre l'avatar dans un fichier temporaire
 
-        var id2 = candidates[Math.floor(Math.random() * candidates.length)];
-        var name2 = (await api.getUserInfo(id2))[id2].name;
+    // Récupère une image GIF depuis une URL
+    let gifLove = (await axios.get(`https://i.ibb.co/y4dWfQq/image.gif`, { responseType: "arraybuffer" })).data;
+    fs.writeFileSync(__dirname + "/cache/giflove.png", Buffer.from(gifLove, "utf-8")); // Enregistre le GIF dans un fichier temporaire
 
-        var rd1 = Math.floor(Math.random() * 100) + 1;
-        var cc = ["-𝟭", "𝟵𝟵.𝟵𝟵", "𝟭𝟵", "∞", "𝟭𝟬𝟭", "𝟬.𝟬𝟭"];
-        var rd2 = cc[Math.floor(Math.random() * cc.length)];
-        var djtme = Array(5).fill(`${rd1}`).concat([`${rd2}`], Array(4).fill(`${rd1}`));
-        var matchRate = djtme[Math.floor(Math.random() * djtme.length)];
+    // Récupère l'avatar de l'utilisateur sélectionné depuis Facebook
+    let Avatar2 = (await axios.get(`https://graph.facebook.com/${id}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: "arraybuffer" })).data;
+    fs.writeFileSync(__dirname + "/cache/avt2.png", Buffer.from(Avatar2, "utf-8")); // Enregistre l'avatar dans un fichier temporaire
 
-        const notes = [
-            "𝗘𝘃𝗲𝗿𝘆 𝘁𝗶𝗺𝗲 𝗜 𝘀𝗲𝗲 𝘆𝗼𝘂, 𝗺𝘆 𝗵𝗲𝗮𝗿𝘁 𝘀𝗸𝗶𝗽𝘀 𝗮 𝗯𝗲𝗮𝘁.",
-            "𝗬𝗼𝘂’𝗿𝗲 𝗺𝘆 𝘁𝗼𝗱𝗮𝘆 𝗮𝗻𝗱 𝗮𝗹𝗹 𝗼𝗳 𝗺𝘆 𝘁𝗼𝗺𝗼𝗿𝗿𝗼𝘄𝘀.",
-            "𝗜𝗻 𝘆𝗼𝘂𝗿 𝘀𝗺𝗶𝗹𝗲, 𝗜 𝘀𝗲𝗲 𝘀𝗼𝗺𝗲𝘁𝗵𝗶𝗻𝗴 𝗺𝗼𝗿𝗲 𝗯𝗲𝗮𝘂𝘁𝗶𝗳𝘂𝗹 𝘁𝗵𝗮𝗻 𝘁𝗵𝗲 𝘀𝘁𝗮𝗿𝘀.",
-            "𝗬𝗼𝘂 𝗺𝗮𝗸𝗲 𝗺𝘆 𝗵𝗲𝗮𝗿𝘁 𝗿𝗮𝗰𝗲 𝘄𝗶𝘁𝗵𝗼𝘂𝘁 𝗲𝘃𝗲𝗻 𝘁𝗿𝘆𝗶𝗻𝗴.",
-            "𝗘𝘃𝗲𝗿𝘆 𝗹𝗼𝘃𝗲 𝘀𝘁𝗼𝗿𝘆 𝗶𝘀 𝗯𝗲𝗮𝘂𝘁𝗶𝗳𝘂𝗹, 𝗯𝘂𝘁 𝗼𝘂𝗿𝘀 𝗶𝘀 𝗺𝘆 𝗳𝗮𝘃𝗼𝗿𝗶𝘁𝗲.",
-            "𝗬𝗼𝘂’𝗿𝗲 𝗺𝘆 𝗳𝗮𝘃𝗼𝗿𝗶𝘁𝗲 𝗽𝗹𝗮𝗰𝗲 𝘁𝗼 𝗴𝗼 𝘄𝗵𝗲𝗻 𝗺𝘆 𝗺𝗶𝗻𝗱 𝘀𝗲𝗮𝗿𝗰𝗵𝗲𝘀 𝗳𝗼𝗿 𝗽𝗲𝗮𝗰𝗲.",
-            "𝗬𝗼𝘂𝗿 𝗲𝘆𝗲𝘀 𝗵𝗼𝗹𝗱 𝘁𝗵𝗲 𝗸𝗲𝘆 𝘁𝗼 𝗺𝘆 𝘀𝗼𝘂𝗹.",
-            "𝗜 𝗱𝗶𝗱𝗻’𝘁 𝗰𝗵𝗼𝗼𝘀𝗲 𝘆𝗼𝘂, 𝗺𝘆 𝗵𝗲𝗮𝗿𝘁 𝗱𝗶𝗱.",
-            "𝗪𝗶𝘁𝗵 𝘆𝗼𝘂, 𝗲𝘃𝗲𝗿𝘆 𝗺𝗼𝗺𝗲𝗻𝘁 𝗯𝗲𝗰𝗼𝗺𝗲𝘀 𝗮 𝗺𝗲𝗺𝗼𝗿𝘆.",
-            "𝗬𝗼𝘂’𝗿𝗲 𝘁𝗵𝗲 𝗿𝗲𝗮𝘀𝗼𝗻 𝗜 𝗯𝗲𝗹𝗶𝗲𝘃𝗲 𝗶𝗻 𝗹𝗼𝘃𝗲."
-        ];
-        const lovelyNote = notes[Math.floor(Math.random() * notes.length)];
+    var imglove = []; // Crée un tableau pour les pièces jointes (images)
 
-        var background = ["https://i.postimg.cc/nrgPFtDG/Picsart-25-08-12-20-22-41-970.png"];
-        var bgURL = background[Math.floor(Math.random() * background.length)];
+    imglove.push(fs.createReadStream(__dirname + "/cache/avt.png")); // Ajoute l'avatar de l'expéditeur en pièce jointe
+    imglove.push(fs.createReadStream(__dirname + "/cache/giflove.png")); // Ajoute le GIF en pièce jointe
+    imglove.push(fs.createReadStream(__dirname + "/cache/avt2.png")); // Ajoute l'avatar de l'utilisateur sélectionné en pièce jointe
 
-        let avt1 = (await axios.get(`https://graph.facebook.com/${id1}/picture?width=720&height=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: "arraybuffer" })).data;
-        fs.writeFileSync(pathAvt1, Buffer.from(avt1, "utf-8"));
+    // Crée le message à envoyer
+    var msg = {
+      body: `🥰 Appariement réussi !\n💌 Je vous souhaite à tous les deux cent ans de bonheur\n💕 Taux de compatibilité: ${tle}%\n${namee} 💓 ${name}`, // Corps du message
+      mentions: arraytag, // Mentions des utilisateurs
+      attachment: imglove // Pièces jointes (images)
+    };
 
-        let avt2 = (await axios.get(`https://graph.facebook.com/${id2}/picture?width=720&height=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: "arraybuffer" })).data;
-        fs.writeFileSync(pathAvt2, Buffer.from(avt2, "utf-8"));
-
-        let bg = (await axios.get(bgURL, { responseType: "arraybuffer" })).data;
-        fs.writeFileSync(pathImg, Buffer.from(bg, "utf-8"));
-
-        let baseImage = await loadImage(pathImg);
-        let imgAvt1 = await loadImage(pathAvt1);
-        let imgAvt2 = await loadImage(pathAvt2);
-        let canvas = createCanvas(baseImage.width, baseImage.height);
-        let ctx = canvas.getContext("2d");
-
-        // Draw background
-        ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
-
-        // Draw square avatars only, no shapes or text
-        ctx.drawImage(imgAvt1, 120, 170, 300, 300);
-        ctx.drawImage(imgAvt2, canvas.width - 420, 170, 300, 300);
-
-        // Save the image buffer
-        const imageBuffer = canvas.toBuffer();
-        fs.writeFileSync(pathImg, imageBuffer);
-
-        // Clean up avatar images
-        fs.removeSync(pathAvt1);
-        fs.removeSync(pathAvt2);
-
-        // Send message with your kawaii styled message below
-        const kawaiiMessage = `
-🌸💞 *Cᴏɴɢʀᴀᴛs* 💞🌸  
-@${name1}  ＆ @${name2} ✨
-
-💖 *Mᴀᴛᴄʜ Rᴀᴛᴇ:* ${matchRate}% 💖
-
-🌷 𝓛𝓸𝓿𝓮𝓵𝔂 𝓝𝓸𝓽𝓮 🌷  
-❝ ${lovelyNote}❞
-
-💫 𝒀𝒐𝒖 𝒂𝒓𝒆 𝒎𝒚 𝒔𝒖𝒏𝒔𝒉𝒊𝒏𝒆! 💫
-`;
-
-        return api.sendMessage(
-            {
-                body: kawaiiMessage,
-                mentions: [
-                    { tag: name1, id: id1 },
-                    { tag: name2, id: id2 }
-                ],
-                attachment: fs.createReadStream(pathImg),
-            },
-            event.threadID,
-            () => fs.unlinkSync(pathImg),
-            event.messageID
-        );
-    },
+    return api.sendMessage(msg, event.threadID, event.messageID); // Envoie le message dans le fil de discussion
+  }
 };

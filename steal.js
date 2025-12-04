@@ -4,18 +4,18 @@ const path = require("path");
 
 module.exports = {
   config: {
-    name: "steal",
+    name: "stea", // traduit "steal" en "voler"
     aliases: [],
     version: "3.0",
     author: "Christus x Aesther",
     countDown: 5,
     role: 2,
     longDescription: {
-      en: "Copy members from one group to another (ThreadID-based stealing)"
+      fr: "Copie les membres d’un groupe vers un autre (basé sur l’ID de discussion)"
     },
-    category: "tools",
+    category: "outils",
     guide: {
-      en: `{p}steal [threadID] - Steal members from another group\n\nNote: The bot must be in both groups.`
+      fr: `{p}voler [threadID] - Copier les membres d’un autre groupe\n\n📌 Remarque : Le bot doit être présent dans les deux groupes.`
     }
   },
 
@@ -25,7 +25,11 @@ module.exports = {
     const targetThreadID = args[0];
 
     if (!targetThreadID || isNaN(targetThreadID)) {
-      return api.sendMessage("❌ Please provide a valid target group Thread ID!\n\nUsage: steal [threadID]", threadID, messageID);
+      return api.sendMessage(
+        "❌ Veuillez fournir un ID de groupe valide !\n\nUtilisation : voler [threadID]",
+        threadID,
+        messageID
+      );
     }
 
     try {
@@ -33,34 +37,41 @@ module.exports = {
       const members = threadInfo.participantIDs.filter(id => id !== api.getCurrentUserID());
 
       if (!members || members.length === 0) {
-        return api.sendMessage("⚠️ No members found to steal from the target group.", threadID, messageID);
+        return api.sendMessage(
+          "⚠️ Aucun membre trouvé dans le groupe cible.",
+          threadID,
+          messageID
+        );
       }
 
-      let added = 0;
-      let failed = 0;
+      let ajoutés = 0;
+      let échoués = 0;
 
-      api.sendMessage(`⏳ Starting member steal process...\nTarget Group: ${targetThreadID}\nTotal Members: ${members.length}`, threadID);
+      api.sendMessage(
+        `⏳ Début du processus de copie des membres...\nGroupe cible : ${targetThreadID}\nNombre total de membres : ${members.length}`,
+        threadID
+      );
 
       for (const userID of members) {
         try {
           await api.addUserToGroup(userID, currentThreadID);
-          added++;
-          await new Promise(resolve => setTimeout(resolve, 500));
+          ajoutés++;
+          await new Promise(resolve => setTimeout(resolve, 500)); // Pause pour éviter les blocages
         } catch (err) {
-          failed++;
+          échoués++;
         }
       }
 
       const msg =
-        `🎯 Steal Process Completed!\n\n` +
-        `👥 Members Scanned: ${members.length}\n✅ Added: ${added}\n❌ Failed: ${failed}\n\n` +
-        `💡 Tip: Some users may have settings preventing being added or already in the group.`;
+        `🎯 Processus terminé !\n\n` +
+        `👥 Membres scannés : ${members.length}\n✅ Ajoutés : ${ajoutés}\n❌ Échecs : ${échoués}\n\n` +
+        `💡 Astuce : Certains utilisateurs peuvent avoir des paramètres qui empêchent leur ajout ou sont déjà dans le groupe.`;
 
       return api.sendMessage(msg, currentThreadID);
     } catch (error) {
-      console.error("Steal Error:", error.message);
+      console.error("Erreur de vol :", error.message);
       return api.sendMessage(
-        "❌ Failed to fetch target group info. Please ensure the Thread ID is correct and the bot is present in that group.",
+        "❌ Échec de la récupération des informations du groupe cible. Vérifiez que l'ID est correct et que le bot est bien présent dans ce groupe.",
         threadID
       );
     }

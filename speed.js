@@ -2,22 +2,23 @@ const fast = require('fast-speedtest-api');
 
 module.exports = {
   config: {
-    name: "speedtest",
-    aliases: ["speed"],
+    name: "speed",
+    aliases: ["speed", "speedtest"],
     version: "1.0",
     author: "Christus",
     countDown: 30,
-    role: 2,
-    shortDescription: "Check system speed",
-    longDescription: "Check system speed",
-    category: "owner",
+    role: 2, // réservé au propriétaire/admin
+    shortDescription: "Tester la vitesse du système",
+    longDescription: "Permet de tester la vitesse de connexion Internet du système où est hébergé le bot.",
+    category: "propriétaire",
     guide: "{pn}"
   },
 
   onStart: async function ({ api, event }) {
     try {
-      const speedTest = new fast({
-        token: "YXNkZmFzZGxmbnNkYWZoYXNkZmhrYWxm",
+      // ⚡ Initialisation du test de vitesse
+      const testVitesse = new fast({
+        token: "YXNkZmFzZGxmbnNkYWZoYXNkZmhrYWxm", // Jeton par défaut de fast.com
         verbose: false,
         timeout: 10000,
         https: true,
@@ -26,21 +27,22 @@ module.exports = {
         unit: fast.UNITS.Mbps
       });
 
-      console.log('Starting speed test...'); // Added for debugging purposes
+      console.log('🚀 Lancement du test de vitesse...');
 
-      const result = await speedTest.getSpeed();
-      console.log('Speed test completed:', result); // Added for debugging purposes
+      const resultat = await testVitesse.getSpeed();
 
-      const message = " [🔰] ." +
-       
-        "Speed💾: " + result + " Ko/s";
+      console.log('✅ Test de vitesse terminé :', resultat, "Mbps");
 
-      console.log('Sending message:', message); // Added for debugging purposes
+      // 📡 Message final envoyé à l'utilisateur
+      const message = `📶 Résultat du test de vitesse :
+💾 Vitesse de téléchargement : ${resultat} Mbps`;
+
+      console.log('✉️ Envoi du message :', message);
 
       return api.sendMessage(message, event.threadID, event.messageID);
-    } catch (error) {
-      console.error('Error occurred:', error); // Added for debugging purposes
-      return api.sendMessage("Error occurred during the speed test.", event.threadID, event.messageID);
+    } catch (erreur) {
+      console.error('❌ Une erreur est survenue :', erreur);
+      return api.sendMessage("⚠️ Une erreur est survenue pendant le test de vitesse.", event.threadID, event.messageID);
     }
   }
 };
