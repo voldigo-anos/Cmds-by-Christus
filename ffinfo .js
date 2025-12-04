@@ -8,14 +8,14 @@ module.exports = {
     role: 0,
     countDown: 10,
     shortDescription: {
-      en: "Get detailed Free Fire player info by UID",
+      fr: "Obtenir les infos détaillées d'un joueur Free Fire par UID",
     },
     longDescription: {
-      en: "Fetch full Free Fire player stats using UID from Aryan's API",
+      fr: "Récupère toutes les statistiques d'un joueur Free Fire en utilisant son UID via l'API d'Aryan",
     },
-    category: "game",
+    category: "jeu",
     guide: {
-      en: "{pn} <UID>",
+      fr: "{pn} <UID>",
     },
   },
 
@@ -23,7 +23,7 @@ module.exports = {
     try {
       if (!args[0]) {
         return api.sendMessage(
-          "❗ Please provide a Free Fire UID",
+          "❗ Veuillez fournir un UID Free Fire",
           event.threadID,
           event.messageID
         );
@@ -36,7 +36,7 @@ module.exports = {
 
       if (!data.basicInfo) {
         return api.sendMessage(
-          `❌ No data found for UID: ${uid}`,
+          `❌ Aucune donnée trouvée pour l'UID : ${uid}`,
           event.threadID,
           event.messageID
         );
@@ -54,32 +54,32 @@ module.exports = {
       let skills = Array.isArray(data.profileInfo?.equipedSkills) ? data.profileInfo.equipedSkills.join(", ") : "N/A";
 
       const message = 
-`🎮 𝗙𝗿𝗲𝗲 𝗙𝗶𝗿𝗲 𝗣𝗹𝗮𝘆𝗲𝗿 𝗜𝗻𝗳𝗼 — UID: ${uid}
+`🎮 𝗜𝗻𝗳𝗼 𝗝𝗼𝘂𝗲𝘂𝗿 𝗙𝗿𝗲𝗲 𝗙𝗶𝗿𝗲 — UID : ${uid}
 
-👤 𝗡𝗶𝗰𝗸𝗻𝗮𝗺𝗲: ${b.nickname}
-🌍 𝗥𝗲𝗴𝗶𝗼𝗻: ${b.region}
-⭐ 𝗟𝗲𝘃𝗲𝗹: ${b.level} (Exp: ${b.exp.toLocaleString()})
-🏆 𝗥𝗮𝗻𝗸: ${b.rank} (Points: ${b.rankingPoints})
-❤️ 𝗟𝗶𝗸𝗲𝗱: ${b.liked}
-⏰ 𝗟𝗮𝘀𝘁 𝗟𝗼𝗴𝗶𝗻: ${lastLogin}
-📅 𝗔𝗰𝗰𝗼𝘂𝗻𝘁 𝗖𝗿𝗲𝗮𝘁𝗲𝗱: ${createAt}
+👤 𝗦urnom : ${b.nickname}
+🌍 𝗥égion : ${b.region}
+⭐ 𝗡iveau : ${b.level} (Exp : ${b.exp.toLocaleString()})
+🏆 𝗥ang : ${b.rank} (Points : ${b.rankingPoints})
+❤️ 𝗔imé : ${b.liked}
+⏰ 𝗗ernière connexion : ${lastLogin}
+📅 𝗖ompte créé le : ${createAt}
 
-👕 𝗖𝗹𝗼𝘁𝗵𝗲𝘀: ${clothes}
-💥 𝗘𝗾𝘂𝗶𝗽𝗽𝗲𝗱 𝗦𝗸𝗶𝗹𝗹𝘀: ${skills}
+👕 𝗩êtements : ${clothes}
+💥 𝗖ompétences équipées : ${skills}
 
-🐾 𝗣𝗲𝘁: ${p.id ? `ID ${p.id}, Level ${p.level}, Skin ${p.skinId}` : "No pet info"}
+🐾 𝗔mi animal : ${p.id ? `ID ${p.id}, Niveau ${p.level}, Skin ${p.skinId}` : "Aucune info sur l'animal"}
 
-💎 𝗗𝗶𝗮𝗺𝗼𝗻𝗱 𝗖𝗼𝘀𝘁: ${d.diamondCost || "N/A"}
+💎 𝗖oût en diamants : ${d.diamondCost || "N/A"}
 
-📊 𝗖𝗿𝗲𝗱𝗶𝘁 𝗦𝗰𝗼𝗿𝗲: ${c.creditScore || "N/A"}
+📊 𝗖rédits : ${c.creditScore || "N/A"}
 
-📝 𝗦𝗶𝗴𝗻𝗮𝘁𝘂𝗿𝗲: ${s.signature || "None"}
-🗣️ 𝗟𝗮𝗻𝗴𝘂𝗮𝗴𝗲: ${s.language || "Unknown"}
+📝 𝗦ignature : ${s.signature || "Aucune"}
+🗣️ 𝗟angue : ${s.language || "Inconnu"}
 `;
 
       return api.sendMessage(message, event.threadID, event.messageID);
     } catch (e) {
-      return api.sendMessage(`⚠️ Error: ${e.message}`, event.threadID, event.messageID);
+      return api.sendMessage(`⚠️ Erreur : ${e.message}`, event.threadID, event.messageID);
     }
   },
 };

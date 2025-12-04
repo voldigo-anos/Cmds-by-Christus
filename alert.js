@@ -6,25 +6,25 @@ module.exports = {
   config: {
     name: "alert",
     version: "1.0",
-    author: "Christus x Aesther",
+    author: "Christus",
     countDown: 5,
     role: 0,
     shortDescription: {
-      en: "Create an alert style image with custom text"
+      fr: "Créer une image de style alerte avec du texte personnalisé"
     },
     description: {
-      en: "Generates an alert style meme image using your text"
+      fr: "Génère une image meme de style alerte avec votre texte"
     },
-    category: "𝗙𝗨𝗡 & 𝗚𝗔𝗠𝗘",
+    category: "𝗙𝗨𝗡 & 𝗝𝗘𝗨",
     guide: {
-      en: "{p}alert <text>\nExample: {p}alert Warning!"
+      fr: "{p}alert <texte>\nExemple : {p}alert Attention !"
     }
   },
 
   langs: {
-    en: {
-      missing: "❌ | Please provide text for the alert image.",
-      error: "❌ | Failed to generate alert image."
+    fr: {
+      missing: "❌ | Veuillez fournir un texte pour l'image d'alerte.",
+      error: "❌ | Impossible de générer l'image d'alerte."
     }
   },
 
@@ -42,7 +42,7 @@ module.exports = {
       fs.writeFileSync(filePath, res.data);
 
       message.reply({
-        body: "🚨 Here's your alert image!",
+        body: "🚨 Voici votre image d'alerte !",
         attachment: fs.createReadStream(filePath)
       }, () => fs.unlinkSync(filePath));
     } catch (err) {

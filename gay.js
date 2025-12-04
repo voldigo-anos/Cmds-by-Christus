@@ -1,76 +1,76 @@
-const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
+const axios = require("axios"); // Importe la bibliothèque axios pour faire des requêtes HTTP.
+const fs = require("fs"); // Importe le module fs pour interagir avec le système de fichiers.
+const path = require("path"); // Importe le module path pour gérer les chemins de fichiers.
 
 module.exports = {
   config: {
-    name: "gay",
-    aliases: [],
-    version: "1.6",
-    author: "Christus x Aesther",
-    countDown: 2,
-    role: 0,
-    description: "Generate a gay image with two user IDs.",
-    category: "fun",
+    name: "gay", // Nom de la commande (par exemple, pour l'utiliser : préfixe gay)
+    aliases: [], // Alias pour la commande (noms alternatifs, par exemple : ['homo', 'lgbt'])
+    version: "1.6", // Version de la commande
+    author: "Christus x Aesther", // Auteur de la commande
+    countDown: 2, // Temps de cooldown en secondes (avant de pouvoir réutiliser la commande)
+    role: 0, // Rôle requis pour utiliser la commande (0 = tout le monde, autre chiffre = rôle spécifique)
+    description: "Génère une image gay avec les IDs de deux utilisateurs.", // Description de la commande
+    category: "fun", // Catégorie de la commande (par exemple, "fun", "utilitaire")
     guide: {
-      en: "{pn} @mention @mention\nOr {pn} @mention\nOr reply to a message."
+      en: "{pn} @mention @mention\nOu {pn} @mention\nOu répondre à un message." // Instructions d'utilisation de la commande (en anglais)
     }
   },
 
-  onStart: async function ({ api, event }) {
+  onStart: async function ({ api, event }) { // Fonction exécutée lorsque la commande est lancée
     try {
-      const mentions = Object.keys(event.mentions || {});
-      let uid1, uid2;
-      let uid1Name, uid2Name;
+      const mentions = Object.keys(event.mentions || {}); // Récupère les IDs des utilisateurs mentionnés dans le message.
+      let uid1, uid2; // Déclare les variables pour les IDs des utilisateurs.
+      let uid1Name, uid2Name; // Déclare les variables pour les noms des utilisateurs.
 
-      // Case 1: Two or more mentions
+      // Cas 1: Deux mentions ou plus
       if (mentions.length >= 2) {
-        uid1 = mentions[0];
-        uid2 = mentions[1];
-        uid1Name = event.mentions[uid1];
-        uid2Name = event.mentions[uid2];
+        uid1 = mentions[0]; // Prend le premier utilisateur mentionné comme uid1
+        uid2 = mentions[1]; // Prend le second utilisateur mentionné comme uid2
+        uid1Name = event.mentions[uid1]; // Récupère le nom du premier utilisateur mentionné
+        uid2Name = event.mentions[uid2]; // Récupère le nom du second utilisateur mentionné
       }
-      // Case 2: One mention
+      // Cas 2: Une mention
       else if (mentions.length === 1) {
-        uid1 = event.senderID;
-        uid2 = mentions[0];
-        const userInfo = await api.getUserInfo(uid1);
-        uid1Name = userInfo[uid1]?.name || "User";
-        uid2Name = event.mentions[uid2];
+        uid1 = event.senderID; // L'expéditeur est uid1
+        uid2 = mentions[0]; // L'utilisateur mentionné est uid2
+        const userInfo = await api.getUserInfo(uid1); // Récupère les informations de l'expéditeur.
+        uid1Name = userInfo[uid1]?.name || "User"; // Récupère le nom de l'expéditeur, ou "User" par défaut.
+        uid2Name = event.mentions[uid2]; // Récupère le nom de l'utilisateur mentionné.
       }
-      // Case 3: Reply to a message
+      // Cas 3: Répondre à un message
       else if (event.messageReply) {
-        uid1 = event.senderID;
-        uid2 = event.messageReply.senderID;
-        const userInfo = await api.getUserInfo([uid1, uid2]);
-        uid1Name = userInfo[uid1]?.name || "User";
-        uid2Name = userInfo[uid2]?.name || "User";
+        uid1 = event.senderID; // L'expéditeur est uid1
+        uid2 = event.messageReply.senderID; // L'expéditeur du message auquel on répond est uid2
+        const userInfo = await api.getUserInfo([uid1, uid2]); // Récupère les informations des deux utilisateurs.
+        uid1Name = userInfo[uid1]?.name || "User"; // Récupère le nom de l'expéditeur, ou "User" par défaut.
+        uid2Name = userInfo[uid2]?.name || "User"; // Récupère le nom de l'autre utilisateur, ou "User" par défaut.
       }
-      // Case 4: No mention or reply
+      // Cas 4: Pas de mention ni de réponse
       else {
-        return api.sendMessage("Please reply to a message or mention one or two users.", event.threadID, event.messageID);
+        return api.sendMessage("Veuillez répondre à un message ou mentionner un ou deux utilisateurs.", event.threadID, event.messageID); // Envoie un message d'erreur si la commande est mal utilisée.
       }
-      
-      const url = `https://neokex-apis.onrender.com/gay?uid1=${uid1}&uid2=${uid2}`;
-      const response = await axios.get(url, { responseType: 'arraybuffer' });
-      const filePath = path.join(__dirname, "cache", `gay_${uid1}_${uid2}.jpg`);
-      fs.writeFileSync(filePath, Buffer.from(response.data, "binary"));
 
-      const messageBody = `Oh yeah ${uid1Name} 💋 ${uid2Name}`;
+      const url = `https://neokex-apis.onrender.com/gay?uid1=${uid1}&uid2=${uid2}`; // Crée l'URL de l'API avec les IDs des utilisateurs.
+      const response = await axios.get(url, { responseType: 'arraybuffer' }); // Fait une requête GET à l'API pour récupérer l'image.  'arraybuffer' pour récupérer les données binaires.
+      const filePath = path.join(__dirname, "cache", `gay_${uid1}_${uid2}.jpg`); // Crée le chemin du fichier temporaire pour l'image.
+      fs.writeFileSync(filePath, Buffer.from(response.data, "binary")); // Écrit les données de l'image dans le fichier temporaire.
+
+      const messageBody = `Oh oui ${uid1Name} 💋 ${uid2Name}`; // Crée le corps du message à envoyer avec l'image.
       const messageMentions = [
         { tag: uid1Name, id: uid1 },
         { tag: uid2Name, id: uid2 }
-      ];
+      ]; // Crée les mentions pour le message.
 
-      api.sendMessage({
+      api.sendMessage({ // Envoie le message avec l'image et les mentions.
         body: messageBody,
-        attachment: fs.createReadStream(filePath),
+        attachment: fs.createReadStream(filePath), // Ajoute l'image en pièce jointe.
         mentions: messageMentions
-      }, event.threadID, () => fs.unlinkSync(filePath), event.messageID);
+      }, event.threadID, () => fs.unlinkSync(filePath), event.messageID); // Supprime le fichier temporaire après l'envoi.
 
     } catch (e) {
-      console.error("Error:", e.message);
-      api.sendMessage("❌ Couldn't generate image. Try again later.", event.threadID, event.messageID);
+      console.error("Erreur:", e.message); // Affiche l'erreur dans la console.
+      api.sendMessage("❌ Impossible de générer l'image. Veuillez réessayer plus tard.", event.threadID, event.messageID); // Envoie un message d'erreur à l'utilisateur.
     }
   }
 };

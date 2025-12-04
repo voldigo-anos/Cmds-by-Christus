@@ -9,32 +9,32 @@ module.exports = {
     author: "Christus",
     countDown: 5,
     role: 2,
-    shortDescription: "View code of a command",
-    longDescription: "View the raw source code of any command in the commands folder",
+    shortDescription: "Voir le code d'une commande",
+    longDescription: "Permet de visualiser le code source brut de n'importe quelle commande dans le dossier des commandes",
     category: "owner",
-    guide: "{pn} <commandName>"
+    guide: "{pn} <nomDeLaCommande>"
   },
 
   onStart: async function ({ args, message }) {
     const cmdName = args[0];
-    if (!cmdName) return message.reply("❌ | Please provide the command name.\nExample: filecmd fluxsnell");
+    if (!cmdName) return message.reply("❌ | Veuillez fournir le nom de la commande.\nExemple : filecmd fluxsnell");
 
     const cmdPath = path.join(__dirname, `${cmdName}.js`);
-    if (!fs.existsSync(cmdPath)) return message.reply(`❌ | Command "${cmdName}" not found in this folder.`);
+    if (!fs.existsSync(cmdPath)) return message.reply(`❌ | La commande "${cmdName}" est introuvable dans ce dossier.`);
 
     try {
       const code = fs.readFileSync(cmdPath, "utf8");
 
       if (code.length > 19000) {
-        return message.reply("⚠️ | This file is too large to display.");
+        return message.reply("⚠️ | Ce fichier est trop volumineux pour être affiché.");
       }
 
       return message.reply({
-        body: `📄 | Source code of "${cmdName}.js":\n\n${code}`
+        body: `📄 | Code source de "${cmdName}.js":\n\n${code}`
       });
     } catch (err) {
       console.error(err);
-      return message.reply("❌ | Error reading the file.");
+      return message.reply("❌ | Erreur lors de la lecture du fichier.");
     }
   }
 };

@@ -8,29 +8,29 @@ module.exports = {
     author: "Christus",
     countDown: 5,
     role: 0,
-    description: "Upload videos to Google Drive easily!",
-    category: "Utility",
-    guide: "Use: {pn} <link> to upload a video from a link\nOr reply to a video/message with media to upload"
+    description: "Téléversez facilement des vidéos sur Google Drive !",
+    category: "Utilitaire",
+    guide: "Utilisation : {pn} <lien> pour téléverser une vidéo depuis un lien\nOu répondez à une vidéo/message contenant un média pour téléverser"
   },
 
   onStart: async function ({ message, event, args }) {
     const i = event?.messageReply?.attachments?.[0]?.url || args[0];
 
-    if (!i) return message.reply("⚠ Please provide a valid video URL or reply to a media message.");
+    if (!i) return message.reply("⚠ Veuillez fournir une URL de vidéo valide ou répondre à un message contenant un média.");
 
     try {
       const r = await a.get(`${u}?url=${encodeURIComponent(i)}`);
       const d = r.data || {};
-      console.log("API response:", d);
+      console.log("Réponse de l'API :", d);
 
       const l = d.driveLink || d.driveLIink;
-      if (l) return message.reply(`✅ File uploaded to Google Drive!\n\n🔗 URL: ${l}`);
+      if (l) return message.reply(`✅ Fichier téléversé sur Google Drive !\n\n🔗 URL : ${l}`);
 
-      const e = d.error || JSON.stringify(d) || "❌ Failed to upload the file.";
-      return message.reply(`Upload failed: ${e}`);
+      const e = d.error || JSON.stringify(d) || "❌ Échec du téléversement du fichier.";
+      return message.reply(`Échec du téléversement : ${e}`);
     } catch (e) {
-      console.error("Upload Error:", e.message || e);
-      return message.reply("❌ An error occurred during upload. Please try again later.");
+      console.error("Erreur de téléversement :", e.message || e);
+      return message.reply("❌ Une erreur est survenue lors du téléversement. Veuillez réessayer plus tard.");
     }
   }
 };

@@ -5,18 +5,18 @@ module.exports = {
     name: "dl",
     aliases: [],
     version: "1.4",
-    author: "Christus x Aesther",
+    author: "Christus",
     countDown: 5,
     role: 0,
     shortDescription: {
-      en: "Download and send video from URL"
+      fr: "Télécharger et envoyer une vidéo depuis une URL"
     },
     description: {
-      en: "Download video from a URL and send it in the chat."
+      fr: "Télécharge une vidéo depuis une URL et l'envoie dans le chat."
     },
     category: "𝗠𝗘𝗗𝗜𝗔",
     guide: {
-      en: "Use the command: !alldl <url> or reply to a message containing a link."
+      fr: "Utilisez la commande : !alldl <url> ou répondez à un message contenant un lien."
     }
   },
 
@@ -33,7 +33,7 @@ module.exports = {
         } else {
           api.setMessageReaction("❌", event.messageID, () => {}, true);
           return api.sendMessage(
-            "No URL found in the reply message.",
+            "Aucune URL trouvée dans le message répondu.",
             event.threadID,
             event.messageID
           );
@@ -41,7 +41,7 @@ module.exports = {
       } else {
         api.setMessageReaction("❌", event.messageID, () => {}, true);
         return api.sendMessage(
-          "Please provide a URL after the command or reply to a message containing a URL.",
+          "Veuillez fournir une URL après la commande ou répondre à un message contenant une URL.",
           event.threadID,
           event.messageID
         );
@@ -66,18 +66,18 @@ module.exports = {
         api.setMessageReaction("✅", event.messageID, () => {}, true);
 
         api.sendMessage({
-          body: `💁‍♂️ Here's your downloaded video!\n\nPlatform: ${platform}\nTitle: ${video_title}`,
+          body: `💁‍♂️ Voici votre vidéo téléchargée !\n\nPlateforme : ${platform}\nTitre : ${video_title}`,
           attachment: stream
         }, event.threadID, (err) => {
           if (err) {
             api.setMessageReaction("❌", event.messageID, () => {}, true);
-            api.sendMessage("Failed to send the video.", event.threadID, event.messageID);
+            api.sendMessage("Échec de l'envoi de la vidéo.", event.threadID, event.messageID);
           }
         }, event.messageID);
       } else {
         api.setMessageReaction("❌", event.messageID, () => {}, true);
         api.sendMessage(
-          "Failed to retrieve the download URL. Please try again later.",
+          "Impossible de récupérer l'URL de téléchargement. Veuillez réessayer plus tard.",
           event.threadID,
           event.messageID
         );
@@ -85,7 +85,7 @@ module.exports = {
     } catch (error) {
       api.setMessageReaction("❌", event.messageID, () => {}, true);
       api.sendMessage(
-        "An error occurred while retrieving video details.",
+        "Une erreur est survenue lors de la récupération des détails de la vidéo.",
         event.threadID,
         event.messageID
       );
@@ -97,11 +97,11 @@ module.exports = {
 
     if (event.body && event.body.toLowerCase() === '!dl on') {
       global.autoDownloadStates[threadID] = 'on';
-      return api.sendMessage("Auto-download is now **ON** for this thread.", threadID, event.messageID);
+      return api.sendMessage("Le téléchargement automatique est maintenant **ACTIVÉ** pour ce fil.", threadID, event.messageID);
     } 
     if (event.body && event.body.toLowerCase() === '!dl off') {
       global.autoDownloadStates[threadID] = 'off';
-      return api.sendMessage("Auto-download is now **OFF** for this thread.", threadID, event.messageID);
+      return api.sendMessage("Le téléchargement automatique est maintenant **DÉSACTIVÉ** pour ce fil.", threadID, event.messageID);
     }
 
     if (!global.autoDownloadStates) {
@@ -149,7 +149,7 @@ module.exports = {
           api.setMessageReaction("✅", event.messageID, () => {}, true);
 
           api.sendMessage({
-            body: `Here's your downloaded video!\n\nPlatform: ${platform}\nTitle: ${video_title}`,
+            body: `Voici votre vidéo téléchargée !\n\nPlateforme : ${platform}\nTitre : ${video_title}`,
             attachment: stream
           }, event.threadID, (err) => {}, event.messageID);
         } else {

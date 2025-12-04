@@ -2,19 +2,21 @@ module.exports = {
 	config: {
 		name: "botsay",
 		version: "1.0",
-		author: "Christus", // Time to wait before executing command again (seconds)
+		author: "Christus",
 		role: 0,
-		category: "text",
+		category: "texte",
 		guide: {
-			vi: "Not Available",
-			en: "botsays + (Message You Want To Get)"
-		} 
+			fr: "botsay + (Message que vous voulez que le bot répète)"
+		}   
 	},
 
 	onStart: async function ({ api, args, event }) {
-	var say = args.join(" ")
-	if (!say) api.sendMessage("Please enter a message", event.threadID, event.messageID)
-	else api.sendMessage(`${say}`, event.threadID, event.messageID);
+		const say = args.join(" ");
+		if (!say) {
+			api.sendMessage("Veuillez entrer un message", event.threadID, event.messageID);
+		} else {
+			api.sendMessage(`${say}`, event.threadID, event.messageID);
+		}
 	}
 
 };

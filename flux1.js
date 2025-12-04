@@ -9,20 +9,20 @@ module.exports = {
     author: "Christus x Aesther",
     countDown: 5,
     role: 0,
-    shortDescription: "Generate ultra-realistic AI images with advanced style options",
-    longDescription: "Use Flux API to generate premium, hyper-realistic AI images with customizable styles and options",
-    category: "AI-IMAGE",
+    shortDescription: "Générer des images IA ultra-réalistes avec des options de style avancées",
+    longDescription: "Utilise l'API Flux pour générer des images IA premium, hyper-réalistes avec styles et options personnalisables",
+    category: "IA-IMAGE",
     guide: {
-      en: `{pn} <prompt> | [style]\n\n📌 Example:\n{pn} a lion in desert | realistic\n{pn} warrior girl with sword | anime\n{pn} cybernetic dragon flying | cyberpunk`
+      fr: `{pn} <prompt> | [style]\n\n📌 Exemple:\n{pn} un lion dans le désert | réaliste\n{pn} guerrière avec épée | anime\n{pn} dragon cybernétique volant | cyberpunk`
     }
   },
 
   langs: {
-    en: {
-      noPrompt: `❗ Please provide a prompt.\n\n📌 Example:\n• flux a lion in jungle | realistic\n• flux dragon on rooftop | fantasy`,
-      generating: "🖼️ Generating your premium AI image...",
-      failed: "❌ Failed to generate image. Please try again later.",
-      invalidStyle: "⚠️ Unknown style provided! Using your prompt as is."
+    fr: {
+      noPrompt: `❗ Veuillez fournir un prompt.\n\n📌 Exemple:\n• flux un lion dans la jungle | réaliste\n• flux dragon sur le toit | fantasy`,
+      generating: "🖼️ Génération de votre image IA premium...",
+      failed: "❌ Échec de la génération de l'image. Veuillez réessayer plus tard.",
+      invalidStyle: "⚠️ Style inconnu fourni ! Le prompt sera utilisé tel quel."
     }
   },
 
@@ -33,32 +33,31 @@ module.exports = {
     const rawPrompt = input[0].trim();
     let style = input[1]?.trim().toLowerCase() || "";
 
-    // অনেক উন্নত স্টাইল ম্যাপ (AI image gen এর জন্য জনপ্রিয় ট্যাগসহ)
+    // Map des styles avancés pour la génération d'image IA
     const styleMap = {
-      realistic: "photorealistic, ultra-detailed, 8K UHD, DSLR quality, natural lighting, depth of field",
-      anime: "anime style, vibrant colors, sharp lines, cel shading, highly detailed character art",
-      fantasy: "fantasy art, epic background, magical aura, dramatic lighting, mythical creatures",
-      cyberpunk: "cyberpunk, neon lights, futuristic cityscape, dark atmosphere, high tech details",
-      cartoon: "cartoon style, bold outlines, bright colors, 2D animation look, fun and playful",
-      "digital art": "digital painting, smooth brush strokes, vivid colors, high detail",
-      "oil painting": "oil painting style, textured brush strokes, classical art, warm tones",
-      "photography": "professional photography, natural light, sharp focus, realistic",
-      "low poly": "low poly art style, geometric shapes, minimalistic, vibrant colors",
-      "pixel art": "pixel art style, retro gaming, 8-bit colors, sharp edges",
-      "surrealism": "surrealistic art, dreamlike scenes, abstract, vivid imagination",
-      "vaporwave": "vaporwave style, pastel colors, retro-futuristic, glitch art",
-      "concept art": "concept art, detailed environment, mood lighting, cinematic",
-      "portrait": "portrait photography, close-up, high detail, studio lighting",
-      "macro": "macro photography, extreme close-up, detailed textures, shallow depth of field"
+      realistic: "photorealiste, ultra-détaillé, 8K UHD, qualité DSLR, éclairage naturel, profondeur de champ",
+      anime: "style anime, couleurs vives, contours nets, cel shading, personnages très détaillés",
+      fantasy: "art fantasy, arrière-plan épique, aura magique, éclairage dramatique, créatures mythiques",
+      cyberpunk: "cyberpunk, lumières néon, ville futuriste, atmosphère sombre, détails high-tech",
+      cartoon: "style cartoon, contours marqués, couleurs vives, look animation 2D, fun et ludique",
+      "digital art": "peinture digitale, coups de pinceau doux, couleurs vives, haute précision",
+      "oil painting": "style peinture à l'huile, texture coups de pinceau, art classique, tons chauds",
+      photography: "photographie professionnelle, lumière naturelle, netteté, réaliste",
+      "low poly": "style low poly, formes géométriques, minimaliste, couleurs vives",
+      "pixel art": "pixel art, rétro-gaming, couleurs 8-bit, contours nets",
+      surrealism: "art surréaliste, scènes oniriques, abstrait, imagination vive",
+      vaporwave: "style vaporwave, couleurs pastel, rétro-futuriste, glitch art",
+      "concept art": "concept art, environnement détaillé, éclairage d'ambiance, cinématique",
+      portrait: "photographie portrait, gros plan, haute précision, éclairage studio",
+      macro: "photographie macro, très gros plan, textures détaillées, faible profondeur de champ"
     };
 
-    // যদি style থাকে, সেটি styleMap থেকে নিবো, অন্যথায় rawPrompt ব্যবহার করবো
+    // Si un style est fourni, on le récupère dans le styleMap, sinon on utilise le prompt brut
     let finalPrompt;
     if (style) {
       if (styleMap[style]) {
         finalPrompt = `${rawPrompt}, ${styleMap[style]}`;
       } else {
-        // Unknown style দিলে শুধু rawPrompt নিবে এবং ইউজারকে জানাবে
         finalPrompt = rawPrompt;
         message.reply(getLang("invalidStyle"));
       }

@@ -6,25 +6,25 @@ module.exports = {
   config: {
     name: "caution",
     version: "1.0",
-    author: "Christus x Aesther",
+    author: "Christus",
     countDown: 5,
     role: 0,
     shortDescription: {
-      en: "Create a caution style image with custom text"
+      fr: "Créer une image style attention avec du texte personnalisé"
     },
     description: {
-      en: "Generates a caution style meme image using your text"
+      fr: "Génère une image meme de style attention en utilisant votre texte"
     },
-    category: "𝗙𝗨𝗡 & 𝗚𝗔𝗠𝗘",
+    category: "𝗙𝗨𝗡 & 𝗝𝗘𝗨",
     guide: {
-      en: "{p}caution <text>\nExample: {p}caution Be careful!"
+      fr: "{p}caution <texte>\nExemple : {p}caution Attention !"
     }
   },
 
   langs: {
-    en: {
-      missing: "❌ | Please provide text for the caution image.",
-      error: "❌ | Failed to generate caution image."
+    fr: {
+      missing: "❌ | Veuillez fournir un texte pour l'image d'attention.",
+      error: "❌ | Impossible de générer l'image d'attention."
     }
   },
 
@@ -42,7 +42,7 @@ module.exports = {
       fs.writeFileSync(filePath, res.data);
 
       message.reply({
-        body: "⚠️ Here's your caution image!",
+        body: "⚠️ Voici votre image d'attention !",
         attachment: fs.createReadStream(filePath)
       }, () => fs.unlinkSync(filePath));
     } catch (err) {

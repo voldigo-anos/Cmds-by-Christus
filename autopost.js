@@ -1,18 +1,18 @@
 module.exports.config = {
   name: "autopost",
   version: "2.1.0",
-  description: "Autopost garden tracker with multiple user scores, names, gear, seeds, eggs, cosmetics, honey, weather, earning points to balance, and on/off",
+  description: "Autopost tracker de jardin avec scores multiples, noms, outils, graines, œufs, cosmétiques, miel, météo, gains de points et activation/désactivation",
   usage: "autopost on/off/score",
   role: 0,
   author: 'Christus x Aesther'
 };
 
 let autoPostInterval = null;
-let activeUsers = new Set(); // Set of active user IDs
-let userScores = {}; // Simple in-memory storage for user scores
-let userNames = {}; // Cache for user names
+let activeUsers = new Set(); // Ensemble des utilisateurs actifs
+let userScores = {}; // Stockage en mémoire des scores des utilisateurs
+let userNames = {}; // Cache pour les noms d'utilisateurs
 
-module.exports.onStart = async function({ api, event, usersData }) { // Added usersData
+module.exports.onStart = async function({ api, event, usersData }) {
   const args = event.body.slice(9).trim().split(' ');
   const action = args[0];
   const replyToId = event.messageID;
@@ -20,89 +20,89 @@ module.exports.onStart = async function({ api, event, usersData }) { // Added us
 
   if (action === 'on') {
     if (activeUsers.has(userId)) {
-      api.sendMessage('You are already in the autopost!', event.threadID, replyToId);
+      api.sendMessage("Vous êtes déjà dans l'autopost !", event.threadID, replyToId);
       return;
     }
-    // Get user name
+    // Récupérer le nom de l'utilisateur
     if (!userNames[userId]) {
       try {
         const userInfo = await api.getUserInfo(userId);
         userNames[userId] = userInfo[userId].name;
       } catch (error) {
-        userNames[userId] = 'Unknown';
+        userNames[userId] = 'Inconnu';
       }
     }
     activeUsers.add(userId);
     if (!userScores[userId]) userScores[userId] = 0;
 
     if (!autoPostInterval) {
-      // Start the interval if not already running
+      // Démarrer l'intervalle si non déjà actif
       autoPostInterval = setInterval(async () => {
-        // Sample gear (added Ticket 2)
+        // Équipements
         const gear = [
-          '- Trading Ticket: x1',
-          '- 🧴 Cleaning Spray: x1',
-          '- 🛠 Trowel: x3',
-          '- 🔧 Recall Wrench: x3',
-          '- 🚿 Watering Can: x3',
-          '- ❤ Favorite Tool: x2',
-          '- 💧 Basic Sprinkler: x3',
-          '- 🌾 Harvest Tool: x1',
-          '- 🎫 Ticket 2: x1' // Added Ticket 2
+          '- Billet d\'échange : x1',
+          '- 🧴 Spray de nettoyage : x1',
+          '- 🛠 Truelle : x3',
+          '- 🔧 Clé de rappel : x3',
+          '- 🚿 Arrosoir : x3',
+          '- ❤ Outil préféré : x2',
+          '- 💧 Arroseur de base : x3',
+          '- 🌾 Outil de récolte : x1',
+          '- 🎫 Billet 2 : x1'
         ];
 
-        // Base seeds (added corn and apple)
+        // Graines de base
         const baseSeeds = [
-          '- 🥕 Carrot: x14',
-          '- 🍇 Grape: x1',
-          '- 🍓 Strawberry: x5',
-          '- 🌷 Orange Tulip: x24',
-          '- 🍅 Tomato: x3',
-          '- 🫐 Blueberry: x5',
-          '- 🍎 Apple: x10',
-          '- 🍌 Banana: x20',
-          '- 🌽 Corn: x8', // Added
-          '- 🍎 Red Apple: x15' // Added
+          '- 🥕 Carotte : x14',
+          '- 🍇 Raisin : x1',
+          '- 🍓 Fraise : x5',
+          '- 🌷 Tulipe orange : x24',
+          '- 🍅 Tomate : x3',
+          '- 🫐 Myrtille : x5',
+          '- 🍎 Pomme : x10',
+          '- 🍌 Banane : x20',
+          '- 🌽 Maïs : x8',
+          '- 🍎 Pomme rouge : x15'
         ];
 
-        // Shuffle seeds for randomness
+        // Mélanger les graines pour le hasard
         const shuffledSeeds = baseSeeds.sort(() => 0.5 - Math.random());
         const selectedSeeds = shuffledSeeds.slice(0, 6);
 
-        // Eggs
+        // Œufs
         const eggs = [
-          '- 🥚 Common Egg: x1',
-          '- 🥚 Common Egg: x1',
-          '- 🥚 Common Egg: x1'
+          '- 🥚 Œuf commun : x1',
+          '- 🥚 Œuf commun : x1',
+          '- 🥚 Œuf commun : x1'
         ];
 
-        // Cosmetics
+        // Cosmétiques
         const cosmetics = [
-          '- Beach Crate: x2',
-          '- Cabana: x1',
-          '- Compost Bin: x1',
-          '- Torch: x1',
-          '- Long Stone Table: x1',
-          '- Rock Pile: x1',
-          '- Small Circle Tile: x5',
-          '- Large Wood Table: x1',
-          '- Bookshelf: x1'
+          '- Caisse de plage : x2',
+          '- Cabana : x1',
+          '- Bac à compost : x1',
+          '- Torche : x1',
+          '- Table en pierre longue : x1',
+          '- Tas de pierres : x1',
+          '- Petite tuile circulaire : x5',
+          '- Grande table en bois : x1',
+          '- Bibliothèque : x1'
         ];
 
-        // Honey (added more)
+        // Miel
         const honey = [
-          '- Corrupt Radar: x1',
-          '- Zen Seed Pack: x1',
-          '- Sakura Bush: x1',
-          '- Zenflare: x2',
-          '- Tranquil Radar: x2',
-          '- Honeycomb: x5', // Added
-          '- Beehive: x3', // Added
-          '- Royal Jelly: x2' // Added
+          '- Radar corrompu : x1',
+          '- Pack de graines Zen : x1',
+          '- Buisson Sakura : x1',
+          '- Zenflare : x2',
+          '- Radar Tranquille : x2',
+          '- Rayon de miel : x5',
+          '- Ruche : x3',
+          '- Gelée royale : x2'
         ];
 
-        // Weather
-        const weather = '⚡ Thunderstorm\n📋 Thunderstorm - Ends: 14:42 - Duration: 3 minutes\n+50% Grow Speed! Higher SHOCKED Fruit Chance!\n🎯 +50% growth; same Wet chance';
+        // Météo
+        const weather = '⚡ Orage\n📋 Orage - Fin : 14:42 - Durée : 3 minutes\n+50% vitesse de croissance ! Plus de chances de fruits électrisés !\n🎯 +50% croissance ; même chance de pluie';
 
         const gearMessage = gear.join('\n');
         const seedsMessage = selectedSeeds.join('\n');
@@ -110,32 +110,31 @@ module.exports.onStart = async function({ api, event, usersData }) { // Added us
         const cosmeticsMessage = cosmetics.join('\n');
         const honeyMessage = honey.join('\n');
 
-        // Build active users list
+        // Liste des utilisateurs actifs
         const activeUsersList = Array.from(activeUsers).map(id => {
-          const name = userNames[id] || 'Unknown';
+          const name = userNames[id] || 'Inconnu';
           const score = userScores[id] || 0;
-          return `👤 ${name}: 🏆 ${score}`;
+          return `👤 ${name} : 🏆 ${score}`;
         }).join('\n');
 
-        const fullMessage = `𝗚𝗮𝗿𝗱𝗲𝗻 — 𝗧𝗿𝗮𝗰𝗸𝗲𝗿\n\n🛠 𝗚𝗲𝗮𝗿:\n${gearMessage}\n⏳ Restock In: 00h 04m 55s\n\n🌱 𝗦𝗲𝗲𝗱𝘀:\n${seedsMessage}\n⏳ Restock In: 00h 04m 55s\n\n🥚 𝗘𝗴𝗴𝘀:\n${eggsMessage}\n⏳ Restock In: 00h 19m 55s\n\n🎨 𝗖𝗼𝘀𝗺𝗲𝘁𝗶𝗰𝘀:\n${cosmeticsMessage}\n⏳ Restock In: 06h 19m 55s\n\n🍯 𝗛𝗼𝗻𝗲𝘆:\n${honeyMessage}\n⏳ Restock In: 00h 19m 55s\n\n🌤 𝗪𝗲𝗮𝘁𝗵𝗲𝗿:\n${weather}\n\n🏅 𝗔𝗰𝘁𝗶𝘃𝗲 𝗨𝘀𝗲𝗿𝘀:\n${activeUsersList}\n\n📅 Updated at (PH): ${new Date().toLocaleString('en-PH')}\n\n🌟 Beautiful Garden Tracker! 🌟`;
+        const fullMessage = `𝗝𝗮𝗿𝗱𝗶𝗻 — 𝗧𝗿𝗮𝗰𝗸𝗲𝗿\n\n🛠 𝗢𝘂𝘁𝗶𝗹𝘀 :\n${gearMessage}\n⏳ Reapprovisionnement dans : 00h 04m 55s\n\n🌱 𝗚𝗿𝗮𝗶𝗻𝗲𝘀 :\n${seedsMessage}\n⏳ Reapprovisionnement dans : 00h 04m 55s\n\n🥚 𝗢𝗲𝘂𝗳𝘀 :\n${eggsMessage}\n⏳ Reapprovisionnement dans : 00h 19m 55s\n\n🎨 𝗖𝗼𝘀𝗺𝗲́𝘁𝗶𝗾𝘂𝗲𝘀 :\n${cosmeticsMessage}\n⏳ Reapprovisionnement dans : 06h 19m 55s\n\n🍯 𝗠𝗶𝗲𝗹 :\n${honeyMessage}\n⏳ Reapprovisionnement dans : 00h 19m 55s\n\n🌤 𝗠𝗲́𝘁𝗲́𝗼 :\n${weather}\n\n🏅 𝗨𝘁𝗶𝗹𝗶𝘀𝗮𝘁𝗲𝘂𝗿𝘀 𝗮𝗰𝘁𝗶𝗳𝘀 :\n${activeUsersList}\n\n📅 Mis à jour (PH) : ${new Date().toLocaleString('fr-FR')}\n\n🌟 Super suivi de jardin ! 🌟`;
 
         try {
           api.createPost(fullMessage);
-          // Increase score and update money for all active users (now 86000)
+          // Augmenter le score et l'argent pour tous les utilisateurs actifs
           for (const id of activeUsers) {
             if (!userScores[id]) userScores[id] = 0;
-            userScores[id] += 86000; // Updated earning
-            // Update money in usersData
+            userScores[id] += 86000;
             const userData = await usersData.get(id) || { money: 0 };
-            const newMoney = (userData.money || 0) + 86000; // 86K money unit
+            const newMoney = (userData.money || 0) + 86000;
             await usersData.set(id, { ...userData, money: newMoney });
           }
         } catch (error) {
-          // Optional: log error
+          // Optionnel : log de l'erreur
         }
-      }, 120000); // 2 minutes
+      }, 120000); // toutes les 2 minutes
     }
-    api.sendMessage('Autopost turned on! You are now active and will earn 86K scores and money per post. Posting every 2 minutes.', event.threadID, replyToId);
+    api.sendMessage("Autopost activé ! Vous êtes maintenant actif et gagnerez 86K points et argent par publication. Publication toutes les 2 minutes.", event.threadID, replyToId);
   } else if (action === 'off') {
     if (activeUsers.has(userId)) {
       activeUsers.delete(userId);
@@ -143,14 +142,14 @@ module.exports.onStart = async function({ api, event, usersData }) { // Added us
         clearInterval(autoPostInterval);
         autoPostInterval = null;
       }
-      api.sendMessage('Autopost turned off for you!', event.threadID, replyToId);
+      api.sendMessage("Autopost désactivé pour vous !", event.threadID, replyToId);
     } else {
-      api.sendMessage('You are not in the autopost!', event.threadID, replyToId);
+      api.sendMessage("Vous n'êtes pas dans l'autopost !", event.threadID, replyToId);
     }
   } else if (action === 'score') {
     const score = userScores[userId] || 0;
-    api.sendMessage(`Your score: ${score}`, event.threadID, replyToId);
+    api.sendMessage(`Votre score : ${score}`, event.threadID, replyToId);
   } else {
-    api.sendMessage('Usage: autopost on/off/score', event.threadID, replyToId);
+    api.sendMessage("Utilisation : autopost on/off/score", event.threadID, replyToId);
   }
 };

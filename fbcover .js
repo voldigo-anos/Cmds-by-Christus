@@ -8,11 +8,11 @@ module.exports = {
     version: "0.1.0",
     author: "Christus",
     role: 0,
-    shortDescription: "Generate Facebook Cover",
-    longDescription: "Create Facebook Cover using your details",
+    shortDescription: "Générer une couverture Facebook",
+    longDescription: "Crée une couverture Facebook en utilisant vos informations",
     category: "image",
     guide: {
-      en: "-fbcover Name | Subname | Email | Phone | Address | Color"
+      fr: "-fbcover Nom | Prénom | Email | Téléphone | Adresse | Couleur"
     }
   },
 
@@ -20,13 +20,13 @@ module.exports = {
     const input = args.join(" ").split("|").map(item => item.trim());
 
     if (input.length < 6) {
-      return message.reply("❌ Please provide all 6 fields:\nName | Subname | Email | Phone | Address | Color");
+      return message.reply("❌ Veuillez fournir les 6 champs :\nNom | Prénom | Email | Téléphone | Adresse | Couleur");
     }
 
     const [name, subname, email, phoneNumber, address, color] = input;
     const uid = event.senderID;
 
-    const waitMsg = await message.reply("🖼 Generating your Facebook cover...");
+    const waitMsg = await message.reply("🖼 Génération de votre couverture Facebook...");
 
     try {
       const boldApi = "http://65.109.80.126:20409/aryan/font?style=bold";
@@ -54,20 +54,20 @@ module.exports = {
 
       await message.reply({
         body:
-`✅ Facebook Cover Created!
+`✅ Couverture Facebook créée !
 
-👤 Name: ${boldName.data.result}
-📧 Email: ${boldEmail.data.result}
-📱 Phone: ${boldPhone.data.result}
-📍 Address: ${boldAddress.data.result}
-🎨 Color: ${boldColor.data.result}`,
+👤 Nom : ${boldName.data.result}
+📧 Email : ${boldEmail.data.result}
+📱 Téléphone : ${boldPhone.data.result}
+📍 Adresse : ${boldAddress.data.result}
+🎨 Couleur : ${boldColor.data.result}`,
         attachment: fs.createReadStream(filePath)
       });
 
       fs.unlinkSync(filePath);
     } catch (err) {
       console.error(err);
-      message.reply("❌ Error generating Facebook cover. Please try again later.");
+      message.reply("❌ Erreur lors de la génération de la couverture Facebook. Veuillez réessayer plus tard.");
     }
 
     if (waitMsg) {

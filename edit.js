@@ -6,13 +6,13 @@ module.exports = {
   config: {
     name: "edit",
     version: "1.0",
-    author: "Christus | Aesther",
+    author: "Christus",
     countDown: 5,
     role: 0,
-    shortDescription: "Edit image using prompt",
-    longDescription: "Edit an uploaded image based on your prompt.",
+    shortDescription: "Modifier une image avec un prompt",
+    longDescription: "Modifie une image téléchargée en fonction de votre prompt.",
     category: "AI-IMAGE",
-    guide: "{p}edit [prompt] (reply to image)"
+    guide: "{p}edit [prompt] (répondez à une image)"
   },
 
   onStart: async function ({ api, event, args, message }) {
@@ -20,7 +20,7 @@ module.exports = {
     const repliedImage = event.messageReply?.attachments?.[0];
 
     if (!prompt || !repliedImage || repliedImage.type !== "photo") {
-      return message.reply("Please reply to a photo with your prompt to edit it.");
+      return message.reply("Veuillez répondre à une photo avec votre prompt pour la modifier.");
     }
     
     api.setMessageReaction("🛠️", event.messageID, () => {}, true);
@@ -36,15 +36,15 @@ module.exports = {
       await fs.writeFile(imgPath, Buffer.from(res.data, "binary"));
 
       message.reply({
-        body: `✅ Edited image for: "${prompt}"`,
+        body: `✅ Image modifiée pour : "${prompt}"`,
         attachment: fs.createReadStream(imgPath)
       });
       
       api.setMessageReaction("✅", event.messageID, () => {}, true);
 
     } catch (err) {
-      console.error("EDIT Error:", err);
-      message.reply("Failed to edit image. Please try again later.");
+      console.error("Erreur EDIT :", err);
+      message.reply("❌ Échec de la modification de l'image. Veuillez réessayer plus tard.");
       
       api.setMessageReaction("❌", event.messageID, () => {}, true);
       

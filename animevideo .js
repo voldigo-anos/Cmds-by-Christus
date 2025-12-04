@@ -5,18 +5,18 @@ module.exports = {
     name: "animevideo",
     aliases: ["anivideo", "avideo"],
     version: "1.1",
-    author: "Christus x Aesther",
+    author: "Christus",
     countDown: 5,
     role: 0,
     shortDescription: {
-      en: "Get a random anime video"
+      fr: "Obtenir une vidéo anime aléatoire"
     },
     description: {
-      en: "Fetches and sends a random anime video with details"
+      fr: "Récupère et envoie une vidéo anime aléatoire avec ses détails"
     },
     category: "media",
     guide: {
-      en: "{pn}"
+      fr: "{pn}"
     }
   },
 
@@ -26,20 +26,20 @@ module.exports = {
       const response = res.data;
 
       if (!response?.data || !response.data.playUrl) {
-        return message.reply("⚠ Couldn't fetch anime video, try again later.");
+        return message.reply("⚠ Impossible de récupérer la vidéo anime, réessayez plus tard.");
       }
 
       const data = response.data;
 
       const caption =
 `🎬 ${data.title}
-👤 Author: ${data.author}
-📹 Uploader: ${data.user?.nickname || "Unknown"}
-👁 Views: ${data.playCount}
-❤ Likes: ${data.diggCount}
-💬 Comments: ${data.commentCount}
-🔁 Shares: ${data.shareCount}
-⬇ Downloads: ${data.downloadCount}`;
+👤 Auteur : ${data.author}
+📹 Uploader : ${data.user?.nickname || "Inconnu"}
+👁 Vues : ${data.playCount}
+❤ Likes : ${data.diggCount}
+💬 Commentaires : ${data.commentCount}
+🔁 Partages : ${data.shareCount}
+⬇ Téléchargements : ${data.downloadCount}`;
 
       await message.reply({
         body: caption,
@@ -48,7 +48,7 @@ module.exports = {
 
     } catch (e) {
       console.error(e);
-      message.reply("❌ Error fetching anime video.");
+      message.reply("❌ Une erreur est survenue lors de la récupération de la vidéo anime.");
     }
   }
 };

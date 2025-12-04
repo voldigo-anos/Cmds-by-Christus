@@ -1,97 +1,58 @@
 const axios = require("axios");
-
 const fs = require("fs");
-
 const path = require("path");
 
 module.exports = {
-
   config: {
-
     name: "clown",
-
     version: "1.0",
-
-    author: "Christus x Aesther",
-
+    author: "Christus",
     countDown: 5,
-
     role: 0,
-
     shortDescription: {
-
-      en: "Add clown face effect to profile picture"
-
+      fr: "Ajouter un effet visage de clown à la photo de profil"
     },
-
     description: {
-
-      en: "Applies a clown face effect to your or mentioned user's avatar"
-
+      fr: "Applique un effet visage de clown à votre avatar ou à celui d'un utilisateur mentionné"
     },
-
-    category: "𝗙𝗨𝗡 & 𝗚𝗔𝗠𝗘",
-
+    category: "𝗙𝗨𝗡 & 𝗝𝗘𝗨",
     guide: {
-
-      en: "{p}clown [@mention or reply]\nIf no mention or reply, uses your profile picture."
-
+      fr: "{p}clown [@mention ou réponse]\nSi aucune mention ou réponse, utilise votre photo de profil."
     }
-
   },
 
   onStart: async function ({ api, event, message }) {
-
     const { senderID, mentions, type, messageReply } = event;
 
-    // Get user ID for avatar
-
+    // Récupérer l'ID de l'utilisateur pour l'avatar
     let uid;
 
     if (Object.keys(mentions).length > 0) {
-
       uid = Object.keys(mentions)[0];
-
     } else if (type === "message_reply") {
-
       uid = messageReply.senderID;
-
     } else {
-
       uid = senderID;
-
     }
 
     const avatarURL = `https://graph.facebook.com/${uid}/picture?width=512&height=512&access_token=350685531728|62f8ce9f74b12f84c123cc23437a4a32`;
 
     try {
-
       const res = await axios.get(`https://api.popcat.xyz/v2/clown?image=${encodeURIComponent(avatarURL)}`, {
-
         responseType: "arraybuffer"
-
       });
 
       const filePath = path.join(__dirname, "cache", `clown_${uid}_${Date.now()}.png`);
-
       fs.writeFileSync(filePath, res.data);
 
       message.reply({
-
-        body: "🤡 Here's your clown effect image!",
-
+        body: "🤡 Voici votre image avec effet clown !",
         attachment: fs.createReadStream(filePath)
-
       }, () => fs.unlinkSync(filePath));
 
     } catch (err) {
-
       console.error(err);
-
-      message.reply("❌ | Failed to generate clown image.");
-
+      message.reply("❌ | Impossible de générer l'image clown.");
     }
-
   }
-
 };

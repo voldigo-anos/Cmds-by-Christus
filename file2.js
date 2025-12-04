@@ -6,15 +6,15 @@ module.exports.config = {
   role: 2,
   author: "Christus",
   usePrefix: true,
-  description: "Send raw content of a file from scripts/cmds folder",
-  category: "utility",
-  guide: { en: "[filename]" },
+  description: "Envoie le contenu brut d'un fichier depuis le dossier scripts/cmds",
+  category: "utilitaire",
+  guide: { fr: "[nomDuFichier]" },
   countDown: 1
 };
 
 module.exports.onStart = async function({ api, event, args }) {
   if (args.length === 0) {
-    return api.sendMessage("[⚜]➜ Please provide the file name.", event.threadID, event.messageID);
+    return api.sendMessage("[⚜]➜ Veuillez fournir le nom du fichier.", event.threadID, event.messageID);
   }
 
   const fileName = args[0];
@@ -25,6 +25,6 @@ module.exports.onStart = async function({ api, event, args }) {
     await api.sendMessage(content, event.threadID, event.messageID);
   } catch (err) {
     console.error(err);
-    api.sendMessage("[⚜]➜ File not found or cannot be read.", event.threadID, event.messageID);
+    api.sendMessage("[⚜]➜ Fichier introuvable ou impossible à lire.", event.threadID, event.messageID);
   }
 };
