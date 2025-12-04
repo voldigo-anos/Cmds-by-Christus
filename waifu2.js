@@ -10,10 +10,10 @@ module.exports = {
     author: "Christus x Aesther",
     countDown: 5,
     role: 0,
-    shortDescription: { en: "Send safe cute anime illustration" },
-    longDescription: { en: "Fetches safe (non-R18) anime images from lolicon API" },
+    shortDescription: "Envoie une illustration d’anime mignonne (SFW)",
+    longDescription: "Récupère des images d’anime sûres (non R18) depuis l’API Lolicon.",
     category: "fun",
-    guide: { en: "+waifu2" }
+    guide: "{pn}"
   },
 
   onStart: async function({ message }) {
@@ -24,20 +24,20 @@ module.exports = {
       });
 
       if (!res.data || !res.data.data || res.data.data.length === 0) {
-        return message.reply("❌");
+        return message.reply("❌ Aucune image trouvée.");
       }
 
       const imageUrl = res.data.data[0].urls.original || res.data.data[0].urls.regular;
-      const filePath = path.join(__dirname, "cache/hentai.jpg");
+      const filePath = path.join(__dirname, "cache/waifu2.jpg");
 
       const file = fs.createWriteStream(filePath);
       https.get(imageUrl, resImg => {
         resImg.pipe(file);
         file.on("finish", () => {
           const caption = `
-✨ 𝓒𝓾𝓽𝓮 𝓗𝓮𝓷𝓽𝓪𝓲 𝓑𝓪𝓫𝔂 ✨
+✨ Illustration d’anime mignonne ✨
 
-🌸 𝐀𝐩𝐢 𝐂𝐫𝐞𝐝𝐢𝐭: 𝐶𝐻𝑅𝐼𝑆𝑇𝑈𝑆
+🌸 Crédit API : Christus
           `;
           message.reply({
             body: caption.trim(),
@@ -45,11 +45,11 @@ module.exports = {
           });
         });
       }).on("error", () => {
-        message.reply("❌");
+        message.reply("❌ Une erreur est survenue lors du téléchargement de l’image.");
       });
 
-    } catch {
-      message.reply("❌";
+    } catch (error) {
+      message.reply("❌ Une erreur est survenue lors de la récupération de l’image.");
     }
   }
 };

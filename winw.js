@@ -10,56 +10,56 @@ module.exports = {
     countDown: 10,
     role: 0,
     shortDescription: {
-      en: "Generate Who Would Win meme comparing two users' profile pictures"
+      fr: "Génère un meme 'Qui Gagnerait' en comparant les photos de profil de deux utilisateurs"
     },
     description: {
-      en: "Use two mentions or reply to two messages to create a Who Would Win meme"
+      fr: "Utilise deux mentions ou réponds à deux messages pour créer un meme 'Qui Gagnerait'"
     },
-    category: "𝗙𝗨𝗡 & 𝗚𝗔𝗠𝗘",
+    category: "𝗙𝗨𝗡 & 𝗝𝗘𝗨",
     guide: {
-      en: "{p}winw @user1 vs @user2\nExample: {p}winw @alice vs @bob"
+      fr: "{p}winw @utilisateur1 vs @utilisateur2\nExemple : {p}winw @alice vs @bob"
     }
   },
 
   onStart: async function ({ api, event, message }) {
     const { mentions, senderID, body, type, messageReply } = event;
 
-    // Parse mentions in format: +winw @user1 vs @user2
-    // We expect exactly two mentions to compare
+    // Parse les mentions au format : +winw @utilisateur1 vs @utilisateur2
+    // On attend exactement deux mentions à comparer
 
-    // Extract mentioned IDs from the message
+    // Récupère les IDs des utilisateurs mentionnés
     const mentionIDs = Object.keys(mentions);
 
     if (mentionIDs.length < 2) {
-      return message.reply("❌ | Please mention two users to compare. Example:\n+winw @user1 vs @user2");
+      return message.reply("❌ | Veuillez mentionner deux utilisateurs à comparer. Exemple :\n+winw @utilisateur1 vs @utilisateur2");
     }
 
-    // Get first two mentioned users
+    // Récupère les deux premiers utilisateurs mentionnés
     const uid1 = mentionIDs[0];
     const uid2 = mentionIDs[1];
 
-    // Get profile pictures URLs with fixed size
+    // Récupère les URLs des photos de profil avec taille fixe
     const avatar1 = `https://graph.facebook.com/${uid1}/picture?width=512&height=512&access_token=350685531728|62f8ce9f74b12f84c123cc23437a4a32`;
     const avatar2 = `https://graph.facebook.com/${uid2}/picture?width=512&height=512&access_token=350685531728|62f8ce9f74b12f84c123cc23437a4a32`;
 
     try {
-      // Call PopCat API with the two images
+      // Appelle l'API PopCat avec les deux images
       const res = await axios.get(`https://api.popcat.xyz/v2/whowouldwin?image1=${encodeURIComponent(avatar1)}&image2=${encodeURIComponent(avatar2)}`, {
         responseType: "arraybuffer"
       });
 
-      // Save image locally
+      // Sauvegarde l'image localement
       const filePath = path.join(__dirname, "cache", `winw_${uid1}_${uid2}_${Date.now()}.png`);
       fs.writeFileSync(filePath, res.data);
 
       message.reply({
-        body: "🤼 Who Would Win? 🤼",
+        body: "🤼 Qui Gagnerait ? 🤼",
         attachment: fs.createReadStream(filePath)
       }, () => fs.unlinkSync(filePath));
 
     } catch (err) {
       console.error(err);
-      message.reply("❌ | Failed to generate Who Would Win meme. Please try again later.");
+      message.reply("❌ | Impossible de générer le meme 'Qui Gagnerait'. Veuillez réessayer plus tard.");
     }
   }
 };
